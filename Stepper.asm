@@ -1,0 +1,39 @@
+        OUTPUT 2500AD
+        ORG 2000H
+        MOV AX,0000H
+        MOV ES,AX
+        MOV DX,0FFE6H
+        MOV AL,80H
+        OUT DX,AL
+        CALL FAR 0FE00:01EDH
+        JMP SHORT START
+MES1:   DB 0AH,0DH,'ENTER DIRECTION'
+        DB 0AH,0DH,'A-ANTICLOCKWISE C-CLOCKWISE',00H
+START:  LEA DX,MES1
+        MOV AX,DX
+        CALL FAR 0FE00:0013H
+GET:    CALL FAR 0FE00:00A9H
+        CMP AL,41H
+        JE ANTI
+        CMP AL,43H
+        JE CLO
+        JMP SHORT GET
+CLO:    CALL COMMON
+R1:     OUT DX,AL
+        CALL DELAY
+        RCR AL,1
+        JMP SHORT R1
+ANTI:   CALL COMMON
+R2:     OUT DX,AL
+        CALL DELAY
+        RCL AL,1
+        JMP SHORT R2
+COMMON: CALL FAR 0FE00:0031H
+        CALL FAR 0FE00:00H
+        MOV AL,11H
+        MOV DX,0FFE0H
+        RET
+DELAY:  MOV CX,800H
+SS:     LOOP SS
+        RET
+        END
